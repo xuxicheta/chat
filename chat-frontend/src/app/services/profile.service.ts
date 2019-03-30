@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { User } from '../common/classes/user.class';
 import { HttpClient } from '@angular/common/http';
+import { MessagingService } from './messaging.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class ProfileService {
   private bearer: string;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private messagingService: MessagingService,
   ) { }
 
   public getLogged() {
@@ -42,6 +44,7 @@ export class ProfileService {
           this.bearer = response.bearer;
           this.userId = response.userId;
           this.aquireProfile();
+          this.messagingService.connect(response.bearer);
         },
         error: error => {
           console.error(error);

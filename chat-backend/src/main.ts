@@ -9,7 +9,9 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   try {
-    const app = await NestFactory.create<NestExpressApplication>(AppModule);
+    const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+      //  logger: console,
+    });
 
     const options = new DocumentBuilder()
     .setTitle('Chat example')
