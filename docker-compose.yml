@@ -1,0 +1,23 @@
+version: '3.1'
+
+services:
+
+  mongo:
+    image: mongo
+    restart: on-failure:10
+    # environment:
+      # MONGO_INITDB_ROOT_USERNAME: chat
+      # MONGO_INITDB_ROOT_PASSWORD: chatmongopass
+    ports:
+      - 2000:27017
+    volumes: 
+      - ./mongo:/data/db
+
+  # mongo-express:
+  #   image: mongo-express
+  #   restart: always
+  #   ports:
+  #     - 8081:8081
+  #   environment:
+  #     ME_CONFIG_MONGODB_ADMINUSERNAME: chat
+  #     ME_CONFIG_MONGODB_ADMINPASSWORD: chatmongopass
