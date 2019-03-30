@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MessagesGateway } from './messages.gateway';
+import { AuthModule } from '../api/auth/auth.module';
 
 @Module({
-  providers: [MessagesGateway]
+  imports: [
+    AuthModule,
+  ],
+  providers: [MessagesGateway],
 })
 export class MessagesModule {}

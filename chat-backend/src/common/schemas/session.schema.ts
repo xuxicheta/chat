@@ -5,6 +5,7 @@ export interface ISession {
   createdAt: Date;
   expireAt: Date;
   userId: string;
+  username: string;
 }
 
 export const SessionSchema = new mongoose.Schema({
@@ -12,6 +13,7 @@ export const SessionSchema = new mongoose.Schema({
   createdAt: Date,
   expireAt: Date,
   userId: String,
+  username: String,
 });
 
 export interface ISessionModel extends mongoose.Document, ISession {

@@ -8,6 +8,7 @@ import { Location } from '@angular/common';
 })
 export class MessagingService {
   private socket: WebSocket;
+  private token: string;
   public close$ = new Subject<CloseEvent>();
   public open$ = new Subject<Event>();
   public error$ = new Subject<Event>();
@@ -19,6 +20,7 @@ export class MessagingService {
   }
 
   connect(token) {
+    this.token = token;
     this.socket = new WebSocket(`ws://${location.hostname}:${location.port}/channel?token=${token}`);
     this.socket.onopen = evt => this.open$.next(evt);
     this.socket.onerror = evt => this.error$.next(evt);
@@ -28,19 +30,18 @@ export class MessagingService {
 
   listening() {
     this.open$.subscribe(evt => {
-      this.send('greetings', null);
+      this.send('greetings', 'hello');
     });
 
-    this.close$.pipe(delay(1000)).subscribe((evt) => {
-      // this.connect();
-      console.warn('socket closed');
+    this.close$.pipe(delay(2000)).subscribe((evt) => {
+      this.connect(this.token);
     });
 
     this.message$.subscribe((evt) => {
-      const data = JSON.parse(evt.data);
-      switch (data.method) {
+      const parsedMessage = JSON.parse(evt.data);
+      switch (parsedMessage.event) {
         case 'message':
-          this.onMessage(data);
+          this.onMessage(parsedMessage);
       }
     });
   }
@@ -49,10 +50,10 @@ export class MessagingService {
     console.log('onMessage data', data);
   }
 
-  send(method: string, params: any) {
+  send(event: string, data: any) {
     const message = JSON.stringify({
-      method,
-      params,
+      event,
+      data,
     });
     console.log('send', message);
     console.log(this.socket);

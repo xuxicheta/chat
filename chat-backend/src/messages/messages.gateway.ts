@@ -3,34 +3,75 @@ import {
   WebSocketGateway,
   WebSocketServer,
   WsResponse,
-  OnGatewayInit,
   OnGatewayConnection,
+  OnGatewayInit,
 } from '@nestjs/websockets';
 import { Server } from 'ws';
-import { Observable, from } from 'rxjs';
-import { map } from 'rxjs/operators';
+import * as clc from 'cli-color';
+import * as ws from 'ws';
+import * as url from 'url';
+import { IncomingMessage } from 'http';
+import { AuthService } from '../api/auth/auth.service';
+import { ISession } from '../common/schemas/session.schema';
+
+const CONNECTION = clc.white('CONNECTION');
+
+interface wse extends ws {
+  number: number;
+  resolved: Promise<void>,
+  session: ISession,
+}
 
 
 @WebSocketGateway({
   path: '/channel',
 })
-export class MessagesGateway implements OnGatewayInit, OnGatewayConnection {
+export class MessagesGateway implements OnGatewayConnection, OnGatewayInit {
   @WebSocketServer()
   server: Server;
 
-  afterInit() {
-    console.log('after init');
+  private connectionCounter = 0;
+
+  constructor(
+    private readonly authService: AuthService,
+  ) {
   }
 
-  handleConnection(socket: import('ws')) {
-    console.log('connection', socket);
-    socket.send('12345');
+  afterInit(server: ws.Server) {
   }
 
-  @SubscribeMessage('events')
-  onEvent(client: any, data: any): Observable<WsResponse<number>> {
-    console.log(client);
-    console.log(data);
-    return from([1, 2, 3]).pipe(map(item => ({ event: 'events', data: item })));
+  async handleConnection(wse: wse, incomingMessage: IncomingMessage) {
+    const urlParsed = url.parse(incomingMessage.url);
+    const urlSearchParams = new url.URLSearchParams(urlParsed.query);
+    const token = urlSearchParams.get('token');
+
+    wse.onclose = evt => this.handleDisconnect(wse);
+
+    wse.resolved = new Promise((resolve, reject) => {
+      this.authService.findSessionByToken(token)
+        .then(session => {
+          wse.session = session;
+          wse.number = this.connectionCounter++;
+          console.log(`${CONNECTION} ${clc.green(' open')} #${wse.number} from user "${session.username}" `);
+          resolve();
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    })
+  }
+
+  async handleDisconnect(wse: wse) {
+    await wse.resolved;
+    console.log(`${CONNECTION} ${clc.red('close')} #${wse.number} from user "${wse.session.username}" `);
+  }
+
+  @SubscribeMessage('greetings')
+  async onGreetings(wse: wse, data: string): Promise<WsResponse<string>> {
+    await wse.resolved;
+    return {
+      event: 'greetingsResponse',
+      data: wse.session.username,
+    };
   }
 }

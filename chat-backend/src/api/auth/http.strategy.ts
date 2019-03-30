@@ -10,13 +10,14 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(id: string): Promise<any> {
-    const userId = await this.authService.findUserIdBySsid(id);
-    if (!userId) {
+    const session = await this.authService.findSessionByToken(id);
+    if (!session) {
       throw new UnauthorizedException();
     }
     return {
-      userId,
-      sessionId: id,
+      userId: session.userId,
+      sessionId: session._id,
+      username: session.username,
     };
   }
 }

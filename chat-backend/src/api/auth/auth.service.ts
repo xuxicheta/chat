@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { LoginDto } from './dto/login.dto';
-import { TSessionModel } from '../../../src/common/schemas/session.schema';
+import { TSessionModel, ISession } from '../../../src/common/schemas/session.schema';
 import { TUserModel } from '../../../src/common/schemas/user.schema';
 
 @Injectable()
@@ -17,21 +17,22 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
-    const existed = await this.userModel.findOne({ username: loginDto.username});
-    if (!existed) {
+    const existedUser = await this.userModel.findOne({ username: loginDto.username});
+    if (!existedUser) {
       throw new Error('Not exist');
     }
-    if (existed.password !== loginDto.password) {
+    if (existedUser.password !== loginDto.password) {
       throw new Error('Login and password not found');
     }
 
     const session = this.sessionModel.create({
       createdAt: new Date(),
       expireAt: new Date(Date.now() + this.expiredTime),
-      userId: existed._id,
+      userId: existedUser._id,
+      username: existedUser.username,
     });
 
-    await existed.updateOne({ lastLoginAt: new Date() });
+    await existedUser.updateOne({ lastLoginAt: new Date() });
     return session;
   }
 
@@ -39,8 +40,8 @@ export class AuthService {
     return this.sessionModel.findByIdAndDelete(id);
   }
 
-  async findUserIdBySsid(id: string): Promise<string> {
-    const session = await this.sessionModel.findById(id);
+  async findSessionByToken(token: string): Promise<ISession> {
+    const session = await this.sessionModel.findById(token);
     if (!session) {
       return null;
     }
@@ -49,6 +50,6 @@ export class AuthService {
       return null;
     }
     await session.updateOne({ expireAt: new Date(Date.now() + this.expiredTime) });
-    return session.userId;
+    return session.toJSON();
   }
 }

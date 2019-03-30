@@ -20,6 +20,6 @@ import { SessionSchema } from '../../common/schemas/session.schema';
   ],
   exports: [
     UserService,
-  ]
+  ],
 })
 export class UserModule {}
