@@ -6,7 +6,7 @@ export class RegisterDto {
   @IsString()
   @IsAscii()
   @ApiModelProperty()
-  @MinLength(5)
+  @MinLength(4)
   readonly username: string;
 
   @IsNotEmpty()

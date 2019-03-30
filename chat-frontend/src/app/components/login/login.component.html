@@ -1,5 +1,5 @@
-<form>
-  <input type="text">
-  <input type="password">
-  <input type="button">
+<form [formGroup]="form" (submit)="formOnSubmit()">
+  <input type="text" formControlName="username" value="username">
+  <input type="password" formControlName="password" autocomplete="" value="password">
+  <input type="submit" value="LogIn">
 </form>

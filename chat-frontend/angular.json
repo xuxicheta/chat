@@ -30,8 +30,9 @@
               "src/styles.scss"
             ],
             "scripts": [],
-            "es5BrowserSupport": true
+            "es5BrowserSupport": false
           },
+          
           "configurations": {
             "production": {
               "fileReplacements": [
@@ -62,7 +63,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "chat-frontend:build"
+            "browserTarget": "chat-frontend:build",
+            "proxyConfig": "./proxy.conf.json"
           },
           "configurations": {
             "production": {

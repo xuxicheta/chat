@@ -12,11 +12,24 @@ export class UserService {
   ) {}
 
   findAll() {
-    return this.userModel.find();
+    return this.userModel.find()
+      .then(users => users.map(user => ({
+        userId: user._id,
+        username: user.username,
+        lastLoginAt: user.lastLoginAt,
+        createdAt: user.createdAt,
+      })));
   }
 
   findOne(id: string) {
-    return this.userModel.findById(id);
+    return this.userModel.findById(id)
+      .then(user => ({
+        ...user.toJSON(),
+        password: undefined,
+        _id: undefined,
+        __v: undefined,
+        userId: user._id,
+      }));
   }
 
   async create(loginDto: LoginDto): Promise<IUser> {
