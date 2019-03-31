@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigService } from '../config/config.service';
+import { ConfigService, ENVES } from '../config/config.service';
 import { ConfigModule } from '../config/config.module';
 
 @Module({
@@ -9,7 +9,7 @@ import { ConfigModule } from '../config/config.module';
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        uri: configService.get('MONGO_ADDRESS'),
+        uri: configService.get(ENVES.MONGO_ADDRESS),
         useNewUrlParser: true,
         useFindAndModify: false,
       }),
@@ -18,4 +18,3 @@ import { ConfigModule } from '../config/config.module';
   ],
 })
 export class DatabaseModule {}
-

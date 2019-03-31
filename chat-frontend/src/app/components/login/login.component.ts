@@ -19,19 +19,19 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.fb.group({
-      username: ['username'],
-      password: ['password'],
+      username: [''],
+      password: [''],
     });
 
-    this.profileService.getProfile$().subscribe(() => {
-      if (this.profileService.getLogged()) {
+    this.profileService.in$.subscribe((value) => {
+      if (value) {
         this.router.navigateByUrl('layout');
       }
     });
   }
 
   public formOnSubmit() {
-    this.profileService.aquireLogin(this.form.value.username, this.form.value.password);
+    this.profileService.acquireLogin(this.form.value.username, this.form.value.password);
   }
 
 }

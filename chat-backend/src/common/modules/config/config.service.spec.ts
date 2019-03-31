@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConfigService } from './config.service';
+import { ConfigService, ENVES } from './config.service';
 
 import * as dotenv from 'dotenv';
 import * as path from 'path';
@@ -29,6 +29,7 @@ describe('ConfigService', () => {
 
   it('should contains MONGO_ADDRESS', () => {
     expect(service).toHaveProperty('envConfig');
-    expect(service.get('MONGO_ADDRESS')).toBeTruthy();
+    expect(service.get(ENVES.MONGO_ADDRESS)).toBe
+    ();
   });
 });

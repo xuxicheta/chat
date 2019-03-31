@@ -1,4 +1,4 @@
-import { validate, IsNotEmpty, IsAlphanumeric, IsDate } from 'class-validator';
+import { validate, IsNotEmpty, IsAlphanumeric, IsDate, IsString } from 'class-validator';
 
 export class User {
   @IsNotEmpty()
@@ -10,7 +10,7 @@ export class User {
   username: string;
 
   @IsNotEmpty()
-  @IsAlphanumeric()
+  @IsString()
   name?: string;
 
   @IsDate()

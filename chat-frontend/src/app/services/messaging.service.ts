@@ -28,13 +28,22 @@ export class MessagingService {
     this.socket.onmessage = evt => this.message$.next(evt);
   }
 
+  disconnect() {
+    this.token = null;
+    if (this.socket && this.socket.readyState === this.socket.OPEN) {
+      this.socket.close();
+    }
+  }
+
   listening() {
     this.open$.subscribe(evt => {
       this.send('greetings', 'hello');
     });
 
     this.close$.pipe(delay(2000)).subscribe((evt) => {
-      this.connect(this.token);
+      if (this.token) {
+        this.connect(this.token);
+      }
     });
 
     this.message$.subscribe((evt) => {
@@ -56,7 +65,6 @@ export class MessagingService {
       data,
     });
     console.log('send', message);
-    console.log(this.socket);
     this.socket.send(message);
   }
 }

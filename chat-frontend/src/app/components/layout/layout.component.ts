@@ -9,19 +9,16 @@ import { User } from 'src/app/common/classes/user.class';
   styleUrls: ['./layout.component.scss']
 })
 export class LayoutComponent implements OnInit {
-  profile: User;
-
   constructor(
     public profileService: ProfileService,
     private router: Router,
   ) { }
 
   ngOnInit() {
-    this.profileService.getProfile$().subscribe(profile => {
-      if (!this.profileService.getLogged()) {
+    this.profileService.in$.subscribe((logged) => {
+      if (!logged) {
         this.router.navigateByUrl('login');
       }
-      this.profile = profile;
     });
   }
 

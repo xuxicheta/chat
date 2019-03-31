@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ProfileService } from 'src/app/services/profile.service';
 
 @Component({
   selector: 'app-topbar',
@@ -6,11 +7,15 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./topbar.component.scss']
 })
 export class TopbarComponent implements OnInit {
-  @Input() username: string;
-
-  constructor() { }
+  constructor(
+    public profileService: ProfileService,
+  ) { }
 
   ngOnInit() {
+  }
+
+  onLogoutClick() {
+    this.profileService.acquireLogout();
   }
 
 }

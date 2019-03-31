@@ -1,3 +1,28 @@
-<p>
-  {{ username }}
-</p>
+<div class="pure-menu pure-menu-horizontal">
+  <span class="pure-menu-heading pure-menu-link">BLYOOKA</span>
+  <ul class="pure-menu-list">
+    <li class="pure-menu-item">
+      <a
+        class="pure-menu-link"
+        routerLink="chat"
+      >
+        Chat
+    </a>
+    </li>
+    <li class="pure-menu-item">
+      <a
+        href="#"
+        class="pure-menu-link"
+        routerLink="/layout/user"
+      >
+        Profile
+      </a>
+    </li>
+    <li class="pure-menu-item">
+      <button
+        class="pure-button button-secondary logout-button"
+        (click)="onLogoutClick()"
+      >Logout</button>
+    </li>
+  </ul>
+</div>
