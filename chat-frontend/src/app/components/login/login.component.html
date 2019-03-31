@@ -1,5 +1,41 @@
-<form [formGroup]="form" (submit)="formOnSubmit()">
-  <input type="text" formControlName="username" value="username">
-  <input type="password" formControlName="password" autocomplete="" value="password">
-  <input type="submit" value="LogIn">
-</form>
+<div class="login-box">
+  <form
+    [formGroup]="form"
+    (submit)="formOnSubmit()"
+    class="pure-form"
+  >
+    <div class="fieldset">
+      <legend>Login</legend>
+      <input
+        class="username-button"
+        formControlName="username"
+        placeholder="Username"
+        type="text"
+        value="username"
+      >
+      <input
+        autocomplete
+        formControlName="password"
+        placeholder="Password"
+        type="password"
+        value="password"
+      >
+    </div>
+
+    <div class="button-box fieldset">
+      <button
+        class="pure-button pure-button-primary"
+        type="submit"
+      >
+        Login
+      </button>
+      <button
+        class="pure-button button-secondary register-button"
+      >
+        Register
+      </button>
+    </div>
+  </form>
+</div>
+
+
