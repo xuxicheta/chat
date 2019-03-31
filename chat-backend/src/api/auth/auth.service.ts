@@ -11,13 +11,20 @@ export class AuthService {
     @InjectModel('Session') private readonly sessionModel: TSessionModel,
     @InjectModel('User') private readonly userModel: TUserModel,
   ) {
-    setInterval(() => {
-      this.sessionModel.remove({}).where('expiredAd').lt(new Date());
-    }, 500000);
+    setInterval(async () => {
+      const sessionsToRemove = await this.sessionModel.find({}).where('expiredAd').lt(new Date());
+      for (const session of sessionsToRemove) {
+        const user = await this.userModel.findById(session.userId);
+        user.logged = user.logged ? user.logged - 1 : 0;
+        await user.save();
+        await session.remove();
+        console.log('expired session removed', session.userId);
+      }
+    }, 20 * 60 * 1000);
   }
 
   async login(loginDto: LoginDto) {
-    const existedUser = await this.userModel.findOne({ username: loginDto.username});
+    const existedUser = await this.userModel.findOne({ username: loginDto.username });
     if (!existedUser) {
       throw new Error('Not exist');
     }
@@ -32,12 +39,19 @@ export class AuthService {
       username: existedUser.username,
     });
 
-    await existedUser.updateOne({ lastLoginAt: new Date() });
+    existedUser.lastLoginAt = new Date();
+    existedUser.logged = (existedUser.logged || 0) + 1;
+    await existedUser.save();
+
     return session;
   }
 
-  logout(id: string) {
-    return this.sessionModel.findByIdAndDelete(id);
+  async logout(id: string) {
+    const session = await this.sessionModel.findById(id);
+    const user = await this.userModel.findById(session.userId);
+    user.logged = user.logged ? user.logged - 1 : 0; // on case where logged is null -> NaN
+    await user.save();
+    return session.remove();
   }
 
   async findSessionByToken(token: string): Promise<ISession> {

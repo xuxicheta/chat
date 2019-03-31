@@ -16,17 +16,16 @@ import { ISession } from '../common/schemas/session.schema';
 
 const CONNECTION = clc.white('CONNECTION');
 
-interface wse extends ws {
+interface WsE extends ws {
   number: number;
-  resolved: Promise<void>,
-  session: ISession,
+  resolved: Promise<void>;
+  session: ISession;
 }
-
 
 @WebSocketGateway({
   path: '/channel',
 })
-export class MessagesGateway implements OnGatewayConnection, OnGatewayInit {
+export class MessagesGateway implements OnGatewayConnection /* OnGatewayInit */ {
   @WebSocketServer()
   server: Server;
 
@@ -37,10 +36,10 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayInit {
   ) {
   }
 
-  afterInit(server: ws.Server) {
-  }
+  // afterInit(server: ws.Server) {
+  // }
 
-  async handleConnection(wse: wse, incomingMessage: IncomingMessage) {
+  async handleConnection(wse: WsE, incomingMessage: IncomingMessage) {
     const urlParsed = url.parse(incomingMessage.url);
     const urlSearchParams = new url.URLSearchParams(urlParsed.query);
     const token = urlSearchParams.get('token');
@@ -61,13 +60,13 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayInit {
     })
   }
 
-  async handleDisconnect(wse: wse) {
+  async handleDisconnect(wse: WsE) {
     await wse.resolved;
     console.log(`${CONNECTION} ${clc.red('close')} #${wse.number} from user "${wse.session && wse.session.username}" `);
   }
 
   @SubscribeMessage('greetings')
-  async onGreetings(wse: wse, data: string): Promise<WsResponse<string>> {
+  async onGreetings(wse: WsE, data: string): Promise<WsResponse<string>> {
     await wse.resolved;
     return {
       event: 'greetingsResponse',

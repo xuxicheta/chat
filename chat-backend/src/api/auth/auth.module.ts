@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { SessionSchema } from '../../common/schemas/session.schema';
 import { HttpStrategy } from './http.strategy';
 import { UserSchema } from '../../common/schemas/user.schema';
+import { AuthController } from './auth.controller';
 
 @Module({
   imports: [
@@ -16,6 +17,9 @@ import { UserSchema } from '../../common/schemas/user.schema';
   ],
   exports: [
     AuthService,
+  ],
+  controllers: [
+    AuthController,
   ],
 })
 export class AuthModule {}

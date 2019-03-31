@@ -11,6 +11,7 @@ export interface IUser {
   updatedAt?: Date;
   username: string;
   contacts: string[];
+  logged?: number;
 }
 
 export const UserSchema = new mongoose.Schema<IUser>({
@@ -30,6 +31,7 @@ export const UserSchema = new mongoose.Schema<IUser>({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
   }],
+  logged: Number,
 }, {
   toJSON: { virtuals: true },
   id: false,
