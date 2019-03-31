@@ -11,15 +11,15 @@ import { tap, filter, switchMap } from 'rxjs/operators';
 })
 export class ProfileService {
   private user$$ = new ReplaySubject<User>(1);
-  private in$$ = new ReplaySubject<boolean>(1);
+  private lg$$ = new ReplaySubject<boolean>(1);
   private userId: string;
   private bearer: string;
 
   private loginLock: boolean;
   private logoutLock: boolean;
 
-  get in$() {
-    return this.in$$.asObservable();
+  get lg$() {
+    return this.lg$$.asObservable();
   }
 
   get user$() {
@@ -56,7 +56,7 @@ export class ProfileService {
   private doLogin(userResponse) {
     console.log('doLogin');
     this.user$$.next(new User(userResponse));
-    this.in$$.next(true);
+    this.lg$$.next(true);
     this.messagingService.connect(this.bearer);
     this.localSave();
     this.logoutLock = false;
@@ -65,7 +65,7 @@ export class ProfileService {
   doLogout() {
     console.log('doLogout');
     this.user$$.next(User.empty());
-    this.in$$.next(false);
+    this.lg$$.next(false);
     this.localRemove();
     this.bearer = null;
     this.userId = null;
@@ -111,10 +111,10 @@ export class ProfileService {
   }
 
   public updateUser(userId: string, data: any) {
-    return this.http.patch(`/api/users/${userId}`, data);
+    return this.http.patch(`/api/users/${userId}`, data, { responseType: 'text' });
   }
 
   public createUser(data: any) {
-    return this.http.post('/api/users', data);
+    return this.http.post('/api/users', data, { responseType: 'text' });
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Router } from '@angular/router';
+import { untilDestroyed } from 'ngx-take-until-destroy';
 
 @Component({
   selector: 'app-login',
@@ -23,11 +24,13 @@ export class LoginComponent implements OnInit {
       password: [''],
     });
 
-    this.profileService.in$.subscribe((value) => {
-      if (value) {
-        this.router.navigateByUrl('layout');
-      }
-    });
+    this.profileService.lg$
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        if (value) {
+          this.router.navigateByUrl('/chat');
+        }
+      });
   }
 
   public formOnSubmit() {

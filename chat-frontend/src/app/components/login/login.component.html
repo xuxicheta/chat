@@ -1,4 +1,6 @@
-<div class="login-box">
+
+
+<div class="login-box box">
   <form
     [formGroup]="form"
     (submit)="formOnSubmit()"
@@ -29,6 +31,8 @@
       </button>
       <button
         class="pure-button button-secondary register-button"
+        type="button"
+        routerLink="/register"
       >
         Register
       </button>

@@ -63,7 +63,7 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayInit {
 
   async handleDisconnect(wse: wse) {
     await wse.resolved;
-    console.log(`${CONNECTION} ${clc.red('close')} #${wse.number} from user "${wse.session.username}" `);
+    console.log(`${CONNECTION} ${clc.red('close')} #${wse.number} from user "${wse.session && wse.session.username}" `);
   }
 
   @SubscribeMessage('greetings')

@@ -1,60 +1,90 @@
-<form
-  [formGroup]="userForm"
-  (submit)="formOnSubmit()"
-  class="pure-form  pure-form-aligned"
->
-  <div class="fieldset field-credentials">
-    <legend>User Credentials</legend>
+<div class="box user-box">
+  <form
+    [formGroup]="userForm"
+    (submit)="formOnSubmit()"
+    class="pure-form  pure-form-aligned"
+  >
+    <div class="fieldset field-credentials">
+      <legend>User Credentials</legend>
 
-    <div class="pure-control-group">
-      <label for="username">Username</label>
-      <input
-        id="username"
-        formControlName="username"
-        placeholder="Username"
-        type="text"
-      >
-      <!-- <span class="pure-form-message-inline">This is a required field.</span> -->
+      <div class="pure-control-group">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          formControlName="username"
+          placeholder="Username"
+          type="text"
+        >
+        <span
+          *ngIf="username.hasError('required')"
+          class="pure-form-message-inline"
+        >
+          Username is a required field.
+        </span>
+        <span
+          *ngIf="username.hasError('minlength')"
+          class="pure-form-message-inline"
+        >
+          Username must have at least 5 symbols.
+        </span>
+      </div>
+
+      <div class="pure-control-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          formControlName="password"
+          placeholder="Password"
+          type="password"
+          autocomplete="new-password"
+        >
+        <span
+          *ngIf="password.hasError('required')"
+          class="pure-form-message-inline"
+        >
+          Password is a required field.
+        </span>
+        <span
+          *ngIf="password.hasError('minlength')"
+          class="pure-form-message-inline"
+        >
+          Password must have at least 5 symbols.
+        </span>
+      </div>
+
+      <legend>User Details</legend>
+      <div class="pure-control-group">
+        <label for="name">Name</label>
+        <input
+          id="name"
+          formControlName="name"
+          placeholder="Name"
+          type="text"
+          autocomplete="off"
+        >
+        <!-- <span class="pure-form-message-inline">This is a required field.</span> -->
+      </div>
     </div>
 
-    <div class="pure-control-group">
-      <label for="password">Password</label>
-      <input
-        id="password"
-        formControlName="password"
-        placeholder="Password"
-        type="password"
-        autocomplete="new-password"
-      >
-      <!-- <span class="pure-form-message-inline">This is a required field.</span> -->
+    <div class="button-box fieldset">
+        <button
+          id="submit"
+          class="pure-button pure-button-primary"
+          type="submit"
+          style="margin-left: 11em"
+        >
+          Submit
+        </button>
+        <button
+          id="back"
+          class="pure-button"
+          type="button"
+          routerLink="/login"
+          style="margin-right: 11.5em;"
+        >
+          back to Login
+        </button>
+        <!-- <span class="pure-form-message-inline">This is a required field.</span> -->
     </div>
-
-    <legend>User Details</legend>
-    <div class="pure-control-group">
-      <label for="name">Name</label>
-      <input
-        id="name"
-        formControlName="name"
-        placeholder="Name"
-        type="text"
-        autocomplete="off"
-      >
-      <!-- <span class="pure-form-message-inline">This is a required field.</span> -->
-    </div>
-  </div>
-
-  <div class="button-box fieldset">
-    <div class="pure-control-group">
-      <label for="submit"></label>
-      <button
-        id="submit"
-        class="pure-button pure-button-primary"
-        type="submit"
-      >
-        Submit
-      </button>
-      <!-- <span class="pure-form-message-inline">This is a required field.</span> -->
-    </div>
-
-  </div>
-</form>
+  </form>
+</div>

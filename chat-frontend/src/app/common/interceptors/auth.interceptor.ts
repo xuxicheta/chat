@@ -6,6 +6,7 @@ import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  expireTimer;
   constructor(
     private profileService: ProfileService,
   ) {}
@@ -20,11 +21,16 @@ export class AuthInterceptor implements HttpInterceptor {
           // console.log(evt);
         }
       }, (error) =>  {
-        console.log(error);
         if (error instanceof HttpErrorResponse) {
           if (error.status === 401) {
             this.profileService.doLogout();
           }
+
+          // timer for idle logout
+          clearTimeout(this.expireTimer);
+          this.expireTimer = setTimeout(() => {
+            this.profileService.acquireLogout();
+          }, 15 * 60 * 1000);
         }
       })
     );

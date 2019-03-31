@@ -1,10 +1,10 @@
 <div class="pure-menu pure-menu-horizontal">
   <span class="pure-menu-heading pure-menu-link">BLYOOKA</span>
-  <ul class="pure-menu-list">
-    <li class="pure-menu-item">
+  <ul class="pure-menu-list" *ngIf="lg | async">
+    <li class="pure-menu-item" >
       <a
         class="pure-menu-link"
-        routerLink="chat"
+        routerLink="/chat"
       >
         Chat
     </a>
@@ -13,7 +13,8 @@
       <a
         href="#"
         class="pure-menu-link"
-        routerLink="/layout/user"
+        routerLink="/user"
+        routerLinkActive="active"
       >
         Profile
       </a>

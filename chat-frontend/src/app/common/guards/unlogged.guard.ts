@@ -7,7 +7,7 @@ import { map, take } from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class LoggedGuard implements CanActivate {
+export class UnLoggedGuard implements CanActivate {
   constructor(
     private profileService: ProfileService,
     private router: Router,
@@ -16,7 +16,7 @@ export class LoggedGuard implements CanActivate {
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<UrlTree | boolean> {
     return this.profileService.lg$.pipe(
       take(1),
-      map(logged => logged || this.router.parseUrl('/login')),
+      map(logged => !logged || this.router.parseUrl('/chat')),
     );
   }
 }

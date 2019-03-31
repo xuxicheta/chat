@@ -1,5 +1,28 @@
+@import '~src/assets/scss/vars.scss';
+
 :host {
+  width: 100%;
+  min-height: calc(100vh - 44px);
+  display: flex;
+  align-items: center;
+  background: $bg_dim;
+}
+
+.user-box {
   max-width: 1000px;
   margin: auto;
   display: block;
+  background: white;
+  padding: 20px;
+  text-align: left;
+}
+
+.pure-form-message-inline {
+  color: red;
+}
+
+.button-box {
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
 }

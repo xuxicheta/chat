@@ -24,6 +24,7 @@ export class AuthController {
       return {
         bearer: session._id,
         userId: session.userId,
+        expireAt: session.expireAt,
       };
     } catch (error) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
