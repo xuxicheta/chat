@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ProfileService } from 'src/app/services/profile.service';
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { untilDestroyed } from 'ngx-take-until-destroy';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   form: FormGroup;
 
   constructor(
@@ -32,6 +32,8 @@ export class LoginComponent implements OnInit {
         }
       });
   }
+
+  ngOnDestroy() {}
 
   public formOnSubmit() {
     this.profileService.acquireLogin(this.form.value.username, this.form.value.password);

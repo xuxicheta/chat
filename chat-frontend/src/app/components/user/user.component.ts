@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ProfileService } from 'src/app/services/profile.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { untilDestroyed } from 'ngx-take-until-destroy';
   templateUrl: './user.component.html',
   styleUrls: ['./user.component.scss']
 })
-export class UserComponent implements OnInit {
+export class UserComponent implements OnInit, OnDestroy {
   public userForm: FormGroup;
   public spec: 'register' | 'user';
   private oldUser: User;
@@ -50,6 +50,8 @@ export class UserComponent implements OnInit {
       }
     });
   }
+
+  ngOnDestroy() {}
 
   buildForm(userData: User): FormGroup {
     return this.fb.group({

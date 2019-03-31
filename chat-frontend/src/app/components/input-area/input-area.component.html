@@ -1,4 +1,4 @@
-<form [formGroup]="form" (submit)="formOnSubmit($event)">
-  <input type="text" formControlName="input">
-  <input type="button" value="Send" (click)="formOnSubmit($event)">
+<form [formGroup]="form" (submit)="formOnSubmit($event)" class="pure-form">
+  <input type="text" formControlName="input" class="text-input">
+  <input type="button" value="Send" (click)="formOnSubmit($event)" class="pure-button">
 </form>
