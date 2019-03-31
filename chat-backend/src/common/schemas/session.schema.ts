@@ -14,6 +14,13 @@ export const SessionSchema = new mongoose.Schema({
   expireAt: Date,
   userId: String,
   username: String,
+}, {
+  toJSON: { virtuals: true },
+  id: false,
+});
+
+SessionSchema.virtual('sessionId').get(function() {
+  return this._id;
 });
 
 export interface ISessionModel extends mongoose.Document, ISession {

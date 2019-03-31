@@ -14,10 +14,6 @@ export class HttpStrategy extends PassportStrategy(Strategy) {
     if (!session) {
       throw new UnauthorizedException();
     }
-    return {
-      userId: session.userId,
-      sessionId: session._id,
-      username: session.username,
-    };
+    return session;
   }
 }
