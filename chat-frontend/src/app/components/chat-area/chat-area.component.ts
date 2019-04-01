@@ -27,8 +27,12 @@ export class ChatAreaComponent implements OnInit {
     this.inputForm = this.fb.group({
       input: [''],
     });
+    this.inputForm.disable();
 
-    this.chatService.selectedContact$.subscribe(() => this.subscribePhrases());
+    this.chatService.selectedContact$.subscribe(() => {
+      this.subscribePhrases();
+      this.inputForm.enable();
+    });
   }
 
   inputFormOnSubmit(event: Event) {
