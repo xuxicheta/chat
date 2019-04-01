@@ -1,7 +1,16 @@
 import { Injectable } from '@angular/core';
-import { Subject, fromEvent } from 'rxjs';
+import { Subject } from 'rxjs';
 import { delay } from 'rxjs/operators';
-import { Location } from '@angular/common';
+
+export enum DOWN_EVENTS {
+  GREETINGS_RESPONSE = 'greetingsResponse',
+  SEND_MESSAGE_RESPONSE = 'sendMessageResponse',
+}
+
+export enum UP_EVENTS {
+  GREETINGS = 'greetings',
+  SEND_MESSAGE = 'sendMessage',
+}
 
 @Injectable({
   providedIn: 'root'
@@ -9,10 +18,11 @@ import { Location } from '@angular/common';
 export class MessagingService {
   private socket: WebSocket;
   private token: string;
-  public close$ = new Subject<CloseEvent>();
-  public open$ = new Subject<Event>();
-  public error$ = new Subject<Event>();
-  public message$ = new Subject<MessageEvent>();
+  private close$ = new Subject<CloseEvent>();
+  private open$ = new Subject<Event>();
+  private error$ = new Subject<Event>();
+  private message$ = new Subject<MessageEvent>();
+  private downMessageSubject = new Subject();
 
   constructor(
   ) {
@@ -37,7 +47,7 @@ export class MessagingService {
 
   listening() {
     this.open$.subscribe(evt => {
-      this.send('greetings', 'hello');
+      this.send(UP_EVENTS.GREETINGS, 'hello');
     });
 
     this.close$.pipe(delay(2000)).subscribe((evt) => {
@@ -49,8 +59,10 @@ export class MessagingService {
     this.message$.subscribe((evt) => {
       const parsedMessage = JSON.parse(evt.data);
       switch (parsedMessage.event) {
-        case 'message':
+        case DOWN_EVENTS.SEND_MESSAGE_RESPONSE:
           this.onMessage(parsedMessage);
+          break;
+        default:
       }
     });
   }
@@ -59,7 +71,7 @@ export class MessagingService {
     console.log('onMessage data', data);
   }
 
-  send(event: string, data: any) {
+  send(event: UP_EVENTS, data: any) {
     const message = JSON.stringify({
       event,
       data,

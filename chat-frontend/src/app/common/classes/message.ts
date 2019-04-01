@@ -1,9 +1,13 @@
 export class Message {
   text: string;
-  date: Date;
+  createdAt: Date;
+  from: string;
+  to: string;
 
-  constructor(text: string) {
+  constructor(text: string, from: string, to: string) {
     this.text = text;
-    this.date = new Date();
+    this.createdAt = new Date();
+    this.from = from;
+    this.to = to;
   }
 }

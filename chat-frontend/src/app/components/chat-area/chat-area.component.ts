@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ChatService } from 'src/app/services/chat.service';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
-import { MessagingService } from 'src/app/services/messaging.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -10,9 +9,10 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./chat-area.component.scss']
 })
 export class ChatAreaComponent implements OnInit {
-  phrases = [];
-  inputForm: FormGroup;
+
   private phrasesSubs = new Subscription();
+  public phrases = [];
+  public inputForm: FormGroup;
 
   get input(): FormControl {
     return this.inputForm.get('input') as FormControl;

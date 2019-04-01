@@ -6,7 +6,9 @@ export enum ENVES {
 export class ConfigService {
   private readonly envConfig: { [key: string]: string };
 
-  constructor(config: { [key: string]: string }) {
+  constructor(
+    config: { [key: string]: string, }
+    ) {
     this.envConfig = config;
   }
 
