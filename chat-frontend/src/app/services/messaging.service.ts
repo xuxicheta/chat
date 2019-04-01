@@ -10,6 +10,7 @@ export enum DOWN_EVENTS {
 export enum UP_EVENTS {
   GREETINGS = 'greetings',
   SEND_MESSAGE = 'sendMessage',
+  LAST_MESSAGES = 'lastMessages',
 }
 
 @Injectable({

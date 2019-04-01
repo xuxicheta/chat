@@ -15,6 +15,7 @@ import { AuthService } from '../api/auth/auth.service';
 import { ISession } from '../common/schemas/session.schema';
 import { MessagesService } from './messages.service';
 import { MessageDto } from './dto/messageDto.class';
+import { IMessageModel } from 'src/common/schemas/message.schema';
 
 const CONNECTION = clc.white('CONNECTION');
 
@@ -26,12 +27,17 @@ export enum DOWN_EVENTS {
 export enum UP_EVENTS {
   GREETINGS = 'greetings',
   SEND_MESSAGE = 'sendMessage',
+  LAST_MESSAGES = 'lastMessages',
 }
 
 interface WsE extends ws {
   number: number;
   resolved: Promise<void>;
   session: ISession;
+}
+
+interface LimitedWsResponse<T> extends WsResponse<T> {
+  event: DOWN_EVENTS;
 }
 
 @WebSocketGateway({
@@ -83,8 +89,18 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayInit {
     console.log(`${CONNECTION} ${clc.red('close')} #${wse.number} from user "${wse.session && wse.session.username}" `);
   }
 
+  send(wse: WsE, event: DOWN_EVENTS, rawData: any) {
+    const data = typeof rawData === 'string'
+      ? rawData
+      : JSON.stringify(rawData);
+    wse.send({
+      event,
+      data,
+    });
+  }
+
   @SubscribeMessage(UP_EVENTS.GREETINGS)
-  async onGreetings(wse: WsE, data: string): Promise<WsResponse<string>> {
+  async onGreetings(wse: WsE, data: string): Promise<LimitedWsResponse<string>> {
     await wse.resolved;
     return {
       event: DOWN_EVENTS.GREETINGS_RESPONSE,
@@ -93,15 +109,29 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayInit {
   }
 
   @SubscribeMessage(UP_EVENTS.SEND_MESSAGE)
-  async onMessage(wse: WsE, messageDto: MessageDto): Promise<WsResponse<Date>> {
+  async onMessage(wse: WsE, messageDto: MessageDto): Promise<LimitedWsResponse<Date>> {
     await wse.resolved;
     await this.messagesService.saveMessage(messageDto);
-    if (messageDto.from !== messageDto.to) {
-
+    if (messageDto.from !== messageDto.to && this.clientsMap.has(messageDto.to)) {
+      this.send(
+        this.clientsMap.get(messageDto.to),
+        DOWN_EVENTS.SEND_MESSAGE_RESPONSE,
+        messageDto,
+      );
     }
     return {
-      event: 'greetingsResponse',
+      event: DOWN_EVENTS.SEND_MESSAGE_RESPONSE,
       data: messageDto.createdAt,
+    };
+  }
+
+  @SubscribeMessage(UP_EVENTS.LAST_MESSAGES)
+  async onLastMessages(wse: WsE, contactId: string): Promise<LimitedWsResponse<IMessageModel[]>> {
+    await wse.resolved;
+    const lastMessages = await this.messagesService.getLastMessages(contactId, wse.session.userId);
+    return {
+      event: DOWN_EVENTS.GREETINGS_RESPONSE,
+      data: lastMessages,
     };
   }
 }

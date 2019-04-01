@@ -47,7 +47,9 @@ export class ChatService {
     if (!this.messages[contactId]) {
       this.messages[contactId] = new BehaviorSubject([]);
     }
+    this.messagingsService.send(UP_EVENTS.LAST_MESSAGES, contactId);
 
     this.selectedContact$.next(contactId);
+
   }
 }
