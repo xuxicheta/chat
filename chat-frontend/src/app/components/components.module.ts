@@ -4,7 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { TopbarComponent } from './topbar/topbar.component';
 import { ChatComponent } from './chat/chat.component';
-import { InputAreaComponent } from './input-area/input-area.component';
 import { UserComponent } from './user/user.component';
 import { ContactsComponent } from './contacts/contacts.component';
 import { RouterModule } from '@angular/router';
@@ -16,7 +15,6 @@ import { UserResolver } from './user/user.resolver';
     LoginComponent,
     TopbarComponent,
     ChatComponent,
-    InputAreaComponent,
     UserComponent,
     ContactsComponent,
     ChatAreaComponent,
@@ -30,7 +28,6 @@ import { UserResolver } from './user/user.resolver';
     LoginComponent,
     TopbarComponent,
     ChatComponent,
-    InputAreaComponent,
     UserComponent,
     ContactsComponent,
     ChatAreaComponent,

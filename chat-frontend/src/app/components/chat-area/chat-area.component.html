@@ -1,5 +1,13 @@
-<p>
-  chat-area works!
-</p>
+<div class="phrases-box">
+  <div class="phrase-string" *ngFor="let phrase of phrases">
+    <span class="phrase-text">{{ phrase.text }}</span>
+    <span class="phrase-date">{{ phrase.date | date }}</span>
+  </div>
 
-<app-input-area></app-input-area>
+</div>
+<form [formGroup]="inputForm" (submit)="inputFormOnSubmit($event)" class="pure-form">
+  <input type="text" formControlName="input" class="text-input">
+  <input type="submit" value="Send" class="pure-button">
+</form>
+
+

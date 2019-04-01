@@ -22,13 +22,16 @@ export class User {
   @IsDate()
   updatedAt?: Date;
 
-  constructor({ userId, username, name, createdAt, lastLoginAt, updatedAt }: any) {
+  contacts: any[];
+
+  constructor({ userId, username, name, createdAt, lastLoginAt, updatedAt, contacts }: any) {
     this.userId = userId;
     this.username = username;
     this.name = name;
     this.createdAt = createdAt ? new Date(createdAt) : null;
     this.lastLoginAt = lastLoginAt ? new Date(lastLoginAt) : null;
     this.updatedAt = updatedAt ? new Date(updatedAt) : null;
+    this.contacts = contacts || [];
     this.validate().then(errors => {
       if (errors.length) {
         console.error('User validation error', errors);

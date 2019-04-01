@@ -1,3 +1,16 @@
-<p>
-  contacts works!
-</p>
+<ng-container *ngIf="(profileService.user$ | async) as user">
+
+  <div
+    *ngFor="let contact of user.contacts"
+    class="contact-box"
+    (click)="onContactClick(contact.userId)"
+  >
+    <span class="name">{{ contact.name }}</span> 
+    <span class="username">{{ contact.username }}</span> 
+    <span class="last-login">{{ contact.lastLoginAt }}</span>
+  </div>
+
+  
+</ng-container>
+
+
