@@ -1,7 +1,7 @@
 <div class="phrases-box">
   <div class="phrase-string" *ngFor="let phrase of phrases">
     <span class="phrase-text">{{ phrase.text }}</span>
-    <span class="phrase-date">{{ phrase.date | date }}</span>
+    <span class="phrase-date">{{ phrase.createdAt | date  }}</span>
   </div>
 
 </div>

@@ -17,7 +17,7 @@ export class ContactsComponent implements OnInit {
 
   ngOnInit() {
     this.profileService.user$.subscribe((user) => {
-      if (user.contacts.length) {
+      if (user.contacts && user.contacts.length) {
         this.selectContact(user.contacts[0].userId);
       }
     });

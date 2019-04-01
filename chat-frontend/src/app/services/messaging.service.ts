@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { Subject, BehaviorSubject } from 'rxjs';
+import { delay, take, filter } from 'rxjs/operators';
 
 export enum DOWN_EVENTS {
   GREETINGS_RESPONSE = 'greetingsResponse',
   SEND_MESSAGE_RESPONSE = 'sendMessageResponse',
+  RECEIVE_MESSAGE = 'receiveMessage',
 }
 
 export enum UP_EVENTS {
@@ -23,7 +24,18 @@ export class MessagingService {
   private open$ = new Subject<Event>();
   private error$ = new Subject<Event>();
   private message$ = new Subject<MessageEvent>();
-  private downMessageSubject = new Subject();
+  private downMessage$$ = new Subject();
+  private socketResolved$$ = new BehaviorSubject(false);
+  private sentMessageReceipt$$ = new Subject();
+
+  get downMessage$() {
+    return this.downMessage$$.asObservable();
+  }
+
+  get sentMessageReceipt$() {
+    return this.sentMessageReceipt$$.asObservable();
+  }
+
 
   constructor(
   ) {
@@ -52,6 +64,7 @@ export class MessagingService {
     });
 
     this.close$.pipe(delay(2000)).subscribe((evt) => {
+      this.socketResolved$$.next(false);
       if (this.token) {
         this.connect(this.token);
       }
@@ -60,24 +73,32 @@ export class MessagingService {
     this.message$.subscribe((evt) => {
       const parsedMessage = JSON.parse(evt.data);
       switch (parsedMessage.event) {
+        case DOWN_EVENTS.GREETINGS_RESPONSE:
+          this.socketResolved$$.next(true);
+          break;
         case DOWN_EVENTS.SEND_MESSAGE_RESPONSE:
-          this.onMessage(parsedMessage);
+          this.sentMessageReceipt$$.next(parsedMessage.data);
+          break;
+        case DOWN_EVENTS.RECEIVE_MESSAGE:
+          this.downMessage$$.next(parsedMessage.data);
           break;
         default:
       }
     });
   }
 
-  onMessage(data) {
-    console.log('onMessage data', data);
-  }
-
   send(event: UP_EVENTS, data: any) {
-    const message = JSON.stringify({
-      event,
-      data,
-    });
-    console.log('send', message);
-    this.socket.send(message);
+    this.socketResolved$$.pipe(
+      filter(v => v),
+      take(1)
+    )
+      .subscribe(() => {
+        const message = JSON.stringify({
+          event,
+          data,
+        });
+        console.log('send', message);
+        this.socket.send(message);
+      });
   }
 }

@@ -33,13 +33,11 @@ export class ChatAreaComponent implements OnInit {
 
   inputFormOnSubmit(event: Event) {
     event.preventDefault();
-    console.log('submitted data', event);
     this.chatService.pushMessage(this.input.value);
     this.input.setValue('');
   }
 
   subscribePhrases() {
-    console.log('subscribePhrases');
     this.phrasesSubs.unsubscribe();
     this.phrasesSubs = this.chatService.getMessagesArray().subscribe(phrases => this.phrases = phrases);
   }

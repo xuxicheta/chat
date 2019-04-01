@@ -22,6 +22,7 @@ const CONNECTION = clc.white('CONNECTION');
 export enum DOWN_EVENTS {
   GREETINGS_RESPONSE = 'greetingsResponse',
   SEND_MESSAGE_RESPONSE = 'sendMessageResponse',
+  RECEIVE_MESSAGE = 'receiveMessage',
 }
 
 export enum UP_EVENTS {
@@ -77,6 +78,9 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayInit {
           this.clientsMap.set(session.userId, wse);
           console.log(`${CONNECTION} ${clc.green(' open')} #${wse.number} from user "${session.username}" `);
           resolve();
+          wse.on('message', (message) => {
+            console.log(`${clc.bgRed('in')} ${clc.white(wse.session.userId)} ${message}`);
+          });
         })
         .catch((error) => {
           reject(error);
@@ -90,13 +94,18 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayInit {
   }
 
   send(wse: WsE, event: DOWN_EVENTS, rawData: any) {
-    const data = typeof rawData === 'string'
-      ? rawData
-      : JSON.stringify(rawData);
-    wse.send({
-      event,
-      data,
-    });
+    try {
+      const data = typeof rawData === 'string'
+        ? rawData
+        : JSON.stringify(rawData);
+      console.log(`${clc.bgBlue('out')} ${clc.white(wse.session.userId)} ${data}`);
+      wse.send({
+        event,
+        data,
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @SubscribeMessage(UP_EVENTS.GREETINGS)
@@ -115,7 +124,7 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayInit {
     if (messageDto.from !== messageDto.to && this.clientsMap.has(messageDto.to)) {
       this.send(
         this.clientsMap.get(messageDto.to),
-        DOWN_EVENTS.SEND_MESSAGE_RESPONSE,
+        DOWN_EVENTS.RECEIVE_MESSAGE,
         messageDto,
       );
     }
