@@ -4,7 +4,7 @@ import { ApiModule } from './api/api.module';
 import { ServicesModule } from './common/services/services.module';
 import { ConfigModule } from './common/modules/config/config.module';
 import { DatabaseModule } from './common/modules/database/database.module';
-import { MessagesModule } from './messages/messages.module';
+import { GatewaysModule } from './gateways/gateways.module';
 import { LogRequestMiddleware } from './common/middlewares/log-request.middleware';
 
 @Module({
@@ -13,7 +13,7 @@ import { LogRequestMiddleware } from './common/middlewares/log-request.middlewar
     ApiModule,
     ServicesModule,
     DatabaseModule,
-    MessagesModule,
+    GatewaysModule,
   ],
   controllers: [
     AppController,

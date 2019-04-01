@@ -8,4 +8,4 @@ import { AuthModule } from '../api/auth/auth.module';
   ],
   providers: [MessagesGateway],
 })
-export class MessagesModule {}
+export class GatewaysModule {}

@@ -25,7 +25,7 @@ interface WsE extends ws {
 @WebSocketGateway({
   path: '/channel',
 })
-export class MessagesGateway implements OnGatewayConnection /* OnGatewayInit */ {
+export class MessagesGateway implements OnGatewayConnection, OnGatewayInit {
   @WebSocketServer()
   server: Server;
 
@@ -36,8 +36,11 @@ export class MessagesGateway implements OnGatewayConnection /* OnGatewayInit */ 
   ) {
   }
 
-  // afterInit(server: ws.Server) {
-  // }
+  afterInit(server: ws.Server) {
+    const port = server.options.port || '';
+    const host = server.options.host || '';
+    console.log(`${clc.green('WS')} started on "${host}:${port}/${server.options.path}`);
+  }
 
   async handleConnection(wse: WsE, incomingMessage: IncomingMessage) {
     const urlParsed = url.parse(incomingMessage.url);
@@ -57,7 +60,7 @@ export class MessagesGateway implements OnGatewayConnection /* OnGatewayInit */ 
         .catch((error) => {
           reject(error);
         });
-    })
+    });
   }
 
   async handleDisconnect(wse: WsE) {
