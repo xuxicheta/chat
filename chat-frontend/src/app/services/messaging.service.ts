@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { delay, take, filter } from 'rxjs/operators';
+import { FgRed, FgBlue } from '../../colors';
+
+const logSocket = console.log;
 
 export enum DOWN_EVENTS {
   GREETINGS_RESPONSE = 'greetingsResponse',
   SEND_MESSAGE_RESPONSE = 'sendMessageResponse',
   RECEIVE_MESSAGE = 'receiveMessage',
+  LAST_MESSAGES_RESPONSE = 'lastMessagesResponse',
 }
 
 export enum UP_EVENTS {
@@ -60,7 +64,7 @@ export class MessagingService {
 
   listening() {
     this.open$.subscribe(evt => {
-      this.send(UP_EVENTS.GREETINGS, 'hello');
+      this.sendRaw(UP_EVENTS.GREETINGS, 'hello');
     });
 
     this.close$.pipe(delay(2000)).subscribe((evt) => {
@@ -72,6 +76,7 @@ export class MessagingService {
 
     this.message$.subscribe((evt) => {
       const parsedMessage = JSON.parse(evt.data);
+      logSocket(FgRed('in'), parsedMessage);
       switch (parsedMessage.event) {
         case DOWN_EVENTS.GREETINGS_RESPONSE:
           this.socketResolved$$.next(true);
@@ -82,9 +87,21 @@ export class MessagingService {
         case DOWN_EVENTS.RECEIVE_MESSAGE:
           this.downMessage$$.next(parsedMessage.data);
           break;
+        case DOWN_EVENTS.LAST_MESSAGES_RESPONSE:
+          console.log(parsedMessage);
+          break;
         default:
       }
     });
+  }
+
+  private sendRaw(event: UP_EVENTS, data: any) {
+    const message = JSON.stringify({
+      event,
+      data,
+    });
+    logSocket(FgBlue('out'), { event, data });
+    this.socket.send(message);
   }
 
   send(event: UP_EVENTS, data: any) {
@@ -93,12 +110,7 @@ export class MessagingService {
       take(1)
     )
       .subscribe(() => {
-        const message = JSON.stringify({
-          event,
-          data,
-        });
-        console.log('send', message);
-        this.socket.send(message);
+        this.sendRaw(event, data);
       });
   }
 }

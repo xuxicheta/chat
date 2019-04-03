@@ -18,7 +18,10 @@
       ],
       "sourceMaps": true,
       "cwd": "${workspaceRoot}/chat-backend",
-      "protocol": "inspector"
+      "protocol": "inspector",
+      "env": {
+        "LOG_SOCKET": "1"
+      }
     },
     {
       "type": "node",
