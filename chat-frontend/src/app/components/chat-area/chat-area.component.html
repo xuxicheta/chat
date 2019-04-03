@@ -1,13 +1,27 @@
 <div class="phrases-box">
-  <div class="phrase-string" *ngFor="let phrase of phrases">
-    <span class="phrase-text">{{ phrase.text }}</span>
+  <div
+    *ngFor="let phrase of phrases"
+    class="phrase-string"
+    [class.fromMe]="chatService.userId===phrase.from"
+    [class.fromHim]="chatService.userId===phrase.to"
+  >
     <span class="phrase-date">{{ phrase.createdAt | date  }}</span>
+    <span class="phrase-text">{{ phrase.text }}</span>
   </div>
-
 </div>
-<form [formGroup]="inputForm" (submit)="inputFormOnSubmit($event)" class="pure-form">
-  <input type="text" formControlName="input" class="text-input">
-  <input type="submit" value="Send" class="pure-button">
+<form
+  [formGroup]="inputForm"
+  (submit)="inputFormOnSubmit($event)"
+  class="pure-form"
+>
+  <input
+    type="text"
+    formControlName="input"
+    class="text-input"
+  >
+  <input
+    type="submit"
+    value="Send"
+    class="pure-button"
+  >
 </form>
-
-

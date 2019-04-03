@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, ReplaySubject } from 'rxjs';
-import { Message } from '../common/classes/message';
+import { Message, IMessage } from '../common/classes/message';
 import { ProfileService } from './profile.service';
 import { MessagingService, DOWN_EVENTS, UP_EVENTS } from './messaging.service';
 
@@ -13,7 +13,7 @@ interface Messages {
 })
 export class ChatService {
   selectedContact$ = new ReplaySubject<string>(1);
-  private userId: string;
+  public userId: string;
   private selectedContact: string;
   private messages: Messages = {};
 
@@ -23,12 +23,18 @@ export class ChatService {
   ) {
     this.profileService.user$.subscribe(user => this.userId = user.userId);
     this.selectedContact$.subscribe(contact => this.selectedContact = contact);
+    this.subscribeOnDownMessages();
   }
 
   pushMessage(text: string) {
     console.log('push messages', text);
     const arr = this.messages[this.selectedContact].getValue().slice();
-    const message = new Message(text, this.userId, this.selectedContact);
+    const message = new Message({
+      text,
+      from: this.userId,
+      to: this.selectedContact,
+      createdAt: new Date(),
+    });
     arr.push(message);
     this.messages[this.selectedContact].next(arr);
     this.messagingsService.send(UP_EVENTS.SEND_MESSAGE, message);
@@ -51,5 +57,13 @@ export class ChatService {
 
     this.selectedContact$.next(contactId);
 
+  }
+
+  subscribeOnDownMessages() {
+    this.messagingsService.downMessage$.subscribe((income: IMessage) => {
+      const array = this.messages[income.from].value;
+      array.push(new Message(income));
+      this.messages[income.from].next(array);
+    });
   }
 }

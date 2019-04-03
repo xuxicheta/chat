@@ -6,3 +6,18 @@
 .phrases-box {
   height: calc(100vh - 44px - 35px);
 }
+
+.phrase-string {
+  margin: 5px;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.fromMe {
+  background: green;
+  margin-left: 20px;
+}
+
+.fromHim {
+  background: blue;
+}

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject, BehaviorSubject } from 'rxjs';
+import { Subject, BehaviorSubject, from } from 'rxjs';
 import { delay, take, filter } from 'rxjs/operators';
 import { FgRed, FgBlue } from '../../colors';
 
@@ -16,6 +16,7 @@ export enum UP_EVENTS {
   GREETINGS = 'greetings',
   SEND_MESSAGE = 'sendMessage',
   LAST_MESSAGES = 'lastMessages',
+  RECEIVE_MESSAGE_RESPONSE = 'receiveResponse'
 }
 
 @Injectable({
@@ -28,7 +29,7 @@ export class MessagingService {
   private open$ = new Subject<Event>();
   private error$ = new Subject<Event>();
   private message$ = new Subject<MessageEvent>();
-  private downMessage$$ = new Subject();
+  private downMessage$$ = new Subject<any>();
   private socketResolved$$ = new BehaviorSubject(false);
   private sentMessageReceipt$$ = new Subject();
 
@@ -88,8 +89,8 @@ export class MessagingService {
           this.downMessage$$.next(parsedMessage.data);
           break;
         case DOWN_EVENTS.LAST_MESSAGES_RESPONSE:
-          console.log(parsedMessage);
-          break;
+            from(parsedMessage.data).subscribe(this.downMessage$$);
+            break;
         default:
       }
     });

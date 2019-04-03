@@ -1,13 +1,20 @@
-export class Message {
+export interface IMessage {
+  text: string;
+  createdAt: Date;
+  from: string;
+  to: string;
+}
+
+export class Message implements IMessage {
   text: string;
   createdAt: Date;
   from: string;
   to: string;
 
-  constructor(text: string, from: string, to: string) {
-    this.text = text;
-    this.createdAt = new Date();
-    this.from = from;
-    this.to = to;
+  constructor(input: IMessage) {
+    this.text = input.text;
+    this.createdAt = new Date(input.createdAt);
+    this.from = input.from;
+    this.to = input.to;
   }
 }
