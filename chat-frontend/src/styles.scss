@@ -1,6 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @import "purecss/build/pure.css";
 
+body, html {
+  background: #eee;
+}
+
 .button-secondary {
   color: white;
   border-radius: 4px;

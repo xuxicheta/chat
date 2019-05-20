@@ -1,5 +1,4 @@
 :host {
-  height: calc(100vh - 44px);
   display: block;
   border: #ddd 1px solid;
   background: rgb(210, 243, 210);
@@ -9,12 +8,13 @@
 }
 
 .contact-box {
-  height: 60px;
+  height: 50px;
   padding: 15px;
   background: white;
   border-bottom: #ddd 1px solid;
   border-radius: 2px;
   cursor: pointer;
+  position: relative;
 }
 
 .name {
@@ -25,4 +25,12 @@
 .username {
   font-size: 0.7em;
   display: block;
+}
+
+.live-status {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  color: gray;
+  font-size: 0.6em;
 }

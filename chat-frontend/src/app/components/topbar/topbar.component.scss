@@ -1,8 +1,13 @@
+:host {
+  background: white;
+}
+
 .pure-menu-horizontal {
   padding-top: 5px;
   padding-bottom: 5px;
 }
 
 .active {
-  background: #ddd;
+  // background: #ddd;
+  text-decoration: underline;
 }

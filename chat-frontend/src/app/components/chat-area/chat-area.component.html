@@ -13,16 +13,16 @@
 <form
   [formGroup]="inputForm"
   (submit)="inputFormOnSubmit($event)"
-  class="pure-form"
+  class="pure-form chat-area__input-form"
 >
   <input
     type="text"
     formControlName="input"
-    class="text-input"
+    class="text-input chat-area__input-form-text"
   >
   <input
     type="submit"
     value="Send"
-    class="pure-button"
+    class="pure-button chat-area__input-form-button"
   >
 </form>

@@ -11,21 +11,27 @@
 }
 
 .phrase-string {
-  margin: 5px;
+  padding: 4px;
+  margin-bottom: 1px;
   display: flex;
+  background: white;
+  word-break: break-word;
+
   .phrase-text {
-    // display: inline-block;
     padding: 10px;
     border-radius: 4px;
     margin-left: 10px;
     margin-right: 10px;
+    background: white;
   }
 
   .phrase-date {
     padding: 13px;
     font-size: 0.6em;
     color: grey;
+    background: white;
   }
+
 }
 
 .fromMe {
@@ -39,5 +45,18 @@
   justify-content: space-between;
   .phrase-text {
     background: rgb(177, 203, 255);
+  }
+}
+
+.chat-area {
+  &__input-form {
+    display: flex;
+    &-text {
+      flex: auto;
+      border-radius: 0 !important;
+    }
+    &-button {
+      flex: none;
+    }
   }
 }
