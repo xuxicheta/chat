@@ -6,3 +6,12 @@
   overflow: hidden;
   margin: auto;
 }
+
+.app-topbar {
+  flex: none;
+}
+
+.app-mainbar {
+  flex: auto;
+  height: 100%;
+}
