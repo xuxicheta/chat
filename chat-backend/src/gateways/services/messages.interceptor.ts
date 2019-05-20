@@ -2,7 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import * as clc from 'cli-color';
-import { WsE } from './messages.gateway';
+import { WsE } from '../messages.gateway';
 import { IncomingMessage } from 'http';
 
 const logSocket = process.env.LOG_SOCKET ? console.log : (...v) => undefined;

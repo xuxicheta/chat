@@ -9,9 +9,10 @@ import { Server } from 'ws';
 import { AuthService } from '../api/auth/auth.service';
 import { ISession } from '../common/schemas/session.schema';
 import { MessageDto } from './dto/messageDto.class';
-import { MessagesGuard } from './messages.guard';
-import { MessagesInterceptor } from './messages.interceptor';
-import { MessagesService } from './messages.service';
+import { MessagesGuard } from './services/messages.guard';
+import { MessagesInterceptor } from './services/messages.interceptor';
+import { MessagesService } from './services/messages.service';
+import { ActivityService } from './services/activity.service';
 
 const CONNECTION = clc.white('CONNECTION');
 const logSocket = process.env.LOG_SOCKET ? console.log : (...v) => undefined;
@@ -21,6 +22,7 @@ export enum DOWN_EVENTS {
   SEND_MESSAGE_RESPONSE = 'sendMessageResponse',
   LAST_MESSAGES_RESPONSE = 'lastMessagesResponse',
   RECEIVE_MESSAGE = 'receiveMessage',
+  CONTACT_STATUS = 'contactStatus',
 }
 
 export enum UP_EVENTS {
@@ -55,6 +57,7 @@ export class MessagesGateway implements websockets.OnGatewayConnection, websocke
   constructor(
     private readonly authService: AuthService,
     private readonly messagesService: MessagesService,
+    private readonly activityService: ActivityService,
   ) {
   }
 
@@ -67,26 +70,24 @@ export class MessagesGateway implements websockets.OnGatewayConnection, websocke
   async handleConnection(wse: WsE, incomingMessage: IncomingMessage) {
     const urlParsed = url.parse(incomingMessage.url);
     const urlSearchParams = new url.URLSearchParams(urlParsed.query);
-    const token = urlSearchParams.get('token');
-
     wse.onclose = evt => this.handleDisconnect(wse);
 
-    wse.resolved = new Promise((resolve, reject) => {
-      this.authService.findSessionByToken(token)
-        .then(session => {
-          if (!session) {
-            throw new Error('session not found');
-          }
-          wse.session = session;
-          wse.number = this.connectionCounter++;
-          this.clientsMap.set(session.userId, wse);
-          console.log(`${CONNECTION} ${clc.green(' open')} #${wse.number} from user "${session.username}" `);
-          resolve(true);
-        })
-        .catch((error) => {
-          console.error(error);
-          reject(false);
-        });
+    wse.resolved = this.activityService.setResolved(urlSearchParams.get('token'))
+      .then((session) => {
+        wse.session = session;
+        wse.number = this.connectionCounter++;
+        this.clientsMap.set(session.userId, wse);
+        console.log(`${CONNECTION} ${clc.green(' open')} #${wse.number} from user "${session.username}" `);
+        return true;
+      })
+      .catch(() => {
+        wse.close();
+        return false;
+      });
+    await wse.resolved;
+    const contactsWS = await this.activityService.getContactsWS(wse.session.userId, this.clientsMap);
+    contactsWS.forEach(contactWS => {
+      this.send(contactWS, DOWN_EVENTS.CONTACT_STATUS, 'online');
     });
   }
 
