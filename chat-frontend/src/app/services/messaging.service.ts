@@ -29,7 +29,7 @@ export class MessagingService {
   private open$ = new Subject<Event>();
   private error$ = new Subject<Event>();
   private message$ = new Subject<MessageEvent>();
-  private downMessage$$ = new Subject<any>();
+  private downMessage$$ = new Subject<any[]>();
   private socketResolved$$ = new BehaviorSubject(false);
   private sentMessageReceipt$$ = new Subject();
 
@@ -89,8 +89,8 @@ export class MessagingService {
           this.downMessage$$.next(parsedMessage.data);
           break;
         case DOWN_EVENTS.LAST_MESSAGES_RESPONSE:
-            from(parsedMessage.data).subscribe(this.downMessage$$);
-            break;
+          this.downMessage$$.next(parsedMessage.data);
+          break;
         default:
       }
     });

@@ -1,6 +1,5 @@
-<div class="phrases-box">
+<div class="phrases-box" #phrasesBox>
   <div
-    #phrasesBox
     *ngFor="let phrase of phrases"
     class="phrase-string"
     [class.fromMe]="chatService.userId===phrase.from"

@@ -17,6 +17,10 @@ export class ChatService {
   private selectedContact: string;
   private messages: Messages = {};
 
+  get messagesArray$() {
+    return this.messages[this.selectedContact].asObservable();
+  }
+
   constructor(
     private profileService: ProfileService,
     private messagingsService: MessagingService,
@@ -27,7 +31,6 @@ export class ChatService {
   }
 
   pushMessage(text: string) {
-    console.log('push messages', text);
     const arr = this.messages[this.selectedContact].getValue().slice();
     const message = new Message({
       text,
@@ -38,10 +41,6 @@ export class ChatService {
     arr.push(message);
     this.messages[this.selectedContact].next(arr);
     this.messagingsService.send(UP_EVENTS.SEND_MESSAGE, message);
-  }
-
-  getMessagesArray(): BehaviorSubject<Message[]> {
-    return this.messages[this.selectedContact];
   }
 
   onSelectContact(contactId) {
@@ -60,11 +59,13 @@ export class ChatService {
   }
 
   subscribeOnDownMessages() {
-    this.messagingsService.downMessage$.subscribe((income: IMessage) => {
+    this.messagingsService.downMessage$.subscribe((incomes: IMessage[]) => {
       const array = this.messages[this.selectedContact].value;
-      array.push(new Message(income));
-      array.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
-      this.messages[this.selectedContact].next(array);
+      const newArray = array.concat(
+        incomes.map(income => new Message(income)),
+      );
+      newArray.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+      this.messages[this.selectedContact].next(newArray);
     });
   }
 }
