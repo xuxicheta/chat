@@ -51,8 +51,7 @@ export class ChatAreaComponent implements OnInit {
     });
     setTimeout(() => {
       const box = this.phrasesBox.nativeElement as HTMLDivElement;
-      
-      box.scrollTo(document.getElementById(this.phrases[this.phrases.length - 1].))
+      // box.scrollTo(document.getElementById(this.phrases[this.phrases.length - 1].))
     })
   }
 

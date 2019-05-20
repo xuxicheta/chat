@@ -1,5 +1,13 @@
 import * as mongoose from 'mongoose';
 
+export interface IContactShort {
+  _id: string;
+  username: string;
+  name: string;
+  userId: string;
+  online?: boolean;
+}
+
 export interface IUser {
   __v?: number;
   _id?: string;
@@ -10,7 +18,7 @@ export interface IUser {
   password?: string;
   updatedAt?: Date;
   username: string;
-  contacts: string[];
+  contacts: IContactShort[];
   logged?: number;
 }
 
@@ -33,11 +41,11 @@ export const UserSchema = new mongoose.Schema<IUser>({
   }],
   logged: Number,
 }, {
-  toJSON: { virtuals: true },
-  id: false,
-});
+    toJSON: { virtuals: true },
+    id: false,
+  });
 
-UserSchema.virtual('userId').get(function() {
+UserSchema.virtual('userId').get(function () {
   return this._id;
 });
 

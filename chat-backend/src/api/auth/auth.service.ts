@@ -20,7 +20,7 @@ export class AuthService {
         await session.remove();
         console.log('expired session removed', session.userId);
       }
-    }, 20 * 60 * 1000);
+    }, 30 * 1000);
   }
 
   async login(loginDto: LoginDto) {

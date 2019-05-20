@@ -5,12 +5,14 @@ import { ApiUseTags, ApiBearerAuth, ApiCreatedResponse, ApiForbiddenResponse } f
 import { IUser } from '../../../src/common/schemas/user.schema';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthService } from '../auth/auth.service';
 
 @ApiUseTags('users')
 @Controller('/api/users')
 export class UserController {
   constructor(
     private readonly userService: UserService,
+    private readonly authService: AuthService,
   ) { }
 
   @Post()
@@ -40,7 +42,15 @@ export class UserController {
   @ApiBearerAuth()
   @UseGuards(AuthGuard('bearer'))
   async one(@Param('userId') userId: string): Promise<IUser> {
-    return this.userService.findOne(userId);
+    const userDataRaw = await this.userService.findOne(userId);
+    const userData = userDataRaw.toJSON();
+    await Promise.all(userData.contacts.map(contact =>
+      this.authService.findSessionByToken(contact.userId)
+        .then(Boolean)
+        .then(online => contact.online = online)
+        .then(() => contact),
+    ));
+    return userData;
   }
 
   @Delete(':userId')
