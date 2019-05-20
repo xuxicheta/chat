@@ -14,6 +14,6 @@ export class MessagesService {
   }
 
   getLastMessages(from: string, to: string) {
-    return this.messageModel.find().or([{ from, to }, { from: to, to: from }]).sort('createdAt').limit(40);
+    return this.messageModel.find().or([{ from, to }, { from: to, to: from }]).sort('-createdAt').limit(40);
   }
 }
