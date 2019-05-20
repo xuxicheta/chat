@@ -61,9 +61,10 @@ export class ChatService {
 
   subscribeOnDownMessages() {
     this.messagingsService.downMessage$.subscribe((income: IMessage) => {
-      const array = this.messages[income.from].value;
+      const array = this.messages[this.selectedContact].value;
       array.push(new Message(income));
-      this.messages[income.from].next(array);
+      array.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+      this.messages[this.selectedContact].next(array);
     });
   }
 }

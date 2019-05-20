@@ -7,13 +7,13 @@ import { MessageDto } from './dto/messageDto.class';
 export class MessagesService {
   constructor(
     @InjectModel('Message') private readonly messageModel: TMessageModel,
-  ) {}
+  ) { }
 
   saveMessage(messageDto: MessageDto): Promise<IMessageModel> {
     return this.messageModel.create(messageDto);
   }
 
   getLastMessages(from: string, to: string) {
-    return this.messageModel.find({ from, to }).sort('createdAt').limit(40);
+    return this.messageModel.find().or([{ from, to }, { from: to, to: from }]).sort('createdAt').limit(40);
   }
 }

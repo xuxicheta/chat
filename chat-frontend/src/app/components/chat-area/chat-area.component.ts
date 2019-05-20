@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2 } from '@angular/core';
 import { ChatService } from 'src/app/services/chat.service';
 import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./chat-area.component.scss']
 })
 export class ChatAreaComponent implements OnInit {
+  @ViewChild('phrasesBox') phrasesBox: ElementRef;
 
   private phrasesSubs = new Subscription();
   public phrases = [];
@@ -21,6 +22,7 @@ export class ChatAreaComponent implements OnInit {
   constructor(
     public chatService: ChatService,
     private fb: FormBuilder,
+    private renderer: Renderer2,
   ) { }
 
   ngOnInit() {
@@ -33,6 +35,7 @@ export class ChatAreaComponent implements OnInit {
       this.subscribePhrases();
       this.inputForm.enable();
     });
+   
   }
 
   inputFormOnSubmit(event: Event) {
@@ -43,7 +46,14 @@ export class ChatAreaComponent implements OnInit {
 
   subscribePhrases() {
     this.phrasesSubs.unsubscribe();
-    this.phrasesSubs = this.chatService.getMessagesArray().subscribe(phrases => this.phrases = phrases);
+    this.phrasesSubs = this.chatService.getMessagesArray().subscribe(phrases => {
+      this.phrases = phrases;
+    });
+    setTimeout(() => {
+      const box = this.phrasesBox.nativeElement as HTMLDivElement;
+      
+      box.scrollTo(document.getElementById(this.phrases[this.phrases.length - 1].))
+    })
   }
 
 }

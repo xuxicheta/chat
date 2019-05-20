@@ -1,29 +1,20 @@
-import {
-  SubscribeMessage,
-  WebSocketGateway,
-  WebSocketServer,
-  WsResponse,
-  OnGatewayConnection,
-  OnGatewayInit,
-  OnGatewayDisconnect,
-} from '@nestjs/websockets';
-import { Server } from 'ws';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
+import * as websockets from '@nestjs/websockets';
 import * as clc from 'cli-color';
-import * as ws from 'ws';
-import * as url from 'url';
 import { IncomingMessage } from 'http';
+import { IMessageModel } from 'src/common/schemas/message.schema';
+import * as url from 'url';
+import * as ws from 'ws';
+import { Server } from 'ws';
 import { AuthService } from '../api/auth/auth.service';
 import { ISession } from '../common/schemas/session.schema';
-import { MessagesService } from './messages.service';
 import { MessageDto } from './dto/messageDto.class';
-import { IMessageModel } from 'src/common/schemas/message.schema';
-import { MessagesInterceptor } from './messages.interceptor';
-import { UseInterceptors, UseGuards } from '@nestjs/common';
 import { MessagesGuard } from './messages.guard';
+import { MessagesInterceptor } from './messages.interceptor';
+import { MessagesService } from './messages.service';
 
 const CONNECTION = clc.white('CONNECTION');
 const logSocket = process.env.LOG_SOCKET ? console.log : (...v) => undefined;
-
 
 export enum DOWN_EVENTS {
   GREETINGS_RESPONSE = 'greetingsResponse',
@@ -44,17 +35,18 @@ export interface WsE extends ws {
   session: ISession;
 }
 
-interface LimitedWsResponse<T> extends WsResponse<T> {
+interface LimitedWsResponse<T> extends websockets.WsResponse<T> {
   event: DOWN_EVENTS;
 }
 
 @UseInterceptors(new MessagesInterceptor())
 @UseGuards(new MessagesGuard())
-@WebSocketGateway({
+@websockets.WebSocketGateway({
   path: '/channel',
+
 })
-export class MessagesGateway implements OnGatewayConnection, OnGatewayInit, OnGatewayDisconnect {
-  @WebSocketServer()
+export class MessagesGateway implements websockets.OnGatewayConnection, websockets.OnGatewayInit, websockets.OnGatewayDisconnect {
+  @websockets.WebSocketServer()
   server: Server;
 
   private clientsMap = new Map<string, WsE>();
@@ -115,7 +107,7 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayInit, OnGa
     }
   }
 
-  @SubscribeMessage(UP_EVENTS.GREETINGS)
+  @websockets.SubscribeMessage(UP_EVENTS.GREETINGS)
   async greetings(wse: WsE, data: string): Promise<LimitedWsResponse<string>> {
     return {
       event: DOWN_EVENTS.GREETINGS_RESPONSE,
@@ -123,7 +115,7 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayInit, OnGa
     };
   }
 
-  @SubscribeMessage(UP_EVENTS.SEND_MESSAGE)
+  @websockets.SubscribeMessage(UP_EVENTS.SEND_MESSAGE)
   async sendMessage(wse: WsE, messageDto: MessageDto): Promise<LimitedWsResponse<Date>> {
     await this.messagesService.saveMessage(messageDto);
     if (messageDto.from !== messageDto.to && this.clientsMap.has(messageDto.to)) {
@@ -143,7 +135,7 @@ export class MessagesGateway implements OnGatewayConnection, OnGatewayInit, OnGa
     };
   }
 
-  @SubscribeMessage(UP_EVENTS.LAST_MESSAGES)
+  @websockets.SubscribeMessage(UP_EVENTS.LAST_MESSAGES)
   async lastMessages(wse: WsE, contactId: string): Promise<LimitedWsResponse<IMessageModel[]>> {
     const lastMessages = await this.messagesService.getLastMessages(contactId, wse.session.userId);
     return {

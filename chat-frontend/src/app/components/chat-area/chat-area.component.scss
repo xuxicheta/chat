@@ -5,19 +5,39 @@
 
 .phrases-box {
   height: calc(100vh - 44px - 35px);
+  min-width: 800px;
+  overflow-y: scroll;
+  align-self: center;
 }
 
 .phrase-string {
   margin: 5px;
-  padding: 10px;
-  border-radius: 4px;
+  display: flex;
+  .phrase-text {
+    // display: inline-block;
+    padding: 10px;
+    border-radius: 4px;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  .phrase-date {
+    padding: 13px;
+    font-size: 0.6em;
+    color: grey;
+  }
 }
 
 .fromMe {
-  background: green;
-  margin-left: 20px;
+  justify-content: start;
+  .phrase-text {
+    background: rgb(206, 255, 206);
+  }
 }
 
 .fromHim {
-  background: blue;
+  justify-content: space-between;
+  .phrase-text {
+    background: rgb(177, 203, 255);
+  }
 }

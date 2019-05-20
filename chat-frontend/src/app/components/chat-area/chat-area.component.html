@@ -1,11 +1,13 @@
 <div class="phrases-box">
   <div
+    #phrasesBox
     *ngFor="let phrase of phrases"
     class="phrase-string"
     [class.fromMe]="chatService.userId===phrase.from"
     [class.fromHim]="chatService.userId===phrase.to"
+    [id]="phrase.createdAt.getTime()"
   >
-    <span class="phrase-date">{{ phrase.createdAt | date  }}</span>
+    <span class="phrase-date">{{ phrase.createdAt | date : 'HH:mm' }}</span>
     <span class="phrase-text">{{ phrase.text }}</span>
   </div>
 </div>
